@@ -1,6 +1,16 @@
 # Daily Şenol Güneş ☀️
 
-Her gün Türkiye saatiyle 21.00'de, kaynağı kayıtlı bir Şenol Güneş sözünü X'te paylaşır. Post yalnızca sözün kendisinden oluşur; tırnak, imza, emoji ve kaynak eklenmez.
+Her gün Türkiye saatiyle 21.00'de [@daily_senol](https://x.com/daily_senol) hesabından, kaynağı doğrulanmış bir Şenol Güneş sözü paylaşan açık kaynak bot.
+
+Post yalnızca sözün kendisinden oluşur; tırnak, imza, emoji, hashtag ve kaynak bağlantısı eklenmez. Kaynaklar inceleme amacıyla SQLite veritabanında saklanır.
+
+## Nasıl çalışır?
+
+- GitHub Actions her gün 18.00 UTC'de (Türkiye saatiyle 21.00) botu çalıştırır.
+- Bot `posted = 0` olan ilk sözü seçer ve X API v2 ile paylaşır.
+- X başarılı cevap verdikten sonra sözü `posted = 1` olarak işaretler.
+- Güncellenen veritabanı otomatik olarak repoya commit edilir.
+- Normal kod push'ları gerçek post atmaz; test ve dry-run çalıştırır.
 
 ## Önce hesabı hazırla
 
@@ -70,3 +80,14 @@ npm run db:remove -- 12
 Yönetim komutlarından sonra `data/quotes.db` dosyasındaki değişikliği commit edip GitHub'a göndermek gerekir.
 
 Kaynak yalnızca senin incelemen için saklanır, postun içine girmez. Bot paylaşılmamış ilk sözü seçer, X başarılı cevap verince `posted` değerini `1` yapar. Bütün sözler bitince yeni tur otomatik başlar.
+
+## Güvenlik
+
+- Gerçek API anahtarları yalnızca GitHub Actions Secrets içinde tutulur.
+- `.env` ve yaygın anahtar/sertifika dosyaları `.gitignore` kapsamındadır.
+- Gerçek paylaşım için ayrıca `CONFIRM_POST=true` güvenlik kilidi gerekir.
+- Kod push'ları yalnızca dry-run çalıştırır; gerçek paylaşım zamanlayıcıdan veya açıkça onaylanmış manuel çalıştırmadan yapılır.
+
+## Lisans ve açıklama
+
+Kod [MIT Lisansı](LICENSE) ile yayımlanmıştır. Bu proje resmî olmayan bir fan projesidir; Şenol Güneş veya bağlı olduğu kurumlarla resmî ilişkisi yoktur. Alıntıların hakları ilgili sahiplerine aittir.

@@ -1,4 +1,23 @@
 node_modules/
-.env
+
+# Yerel ortam değişkenleri ve gizli anahtarlar
+.env*
+!.env.example
+*.pem
+*.key
+*.p12
+credentials*.json
+secrets.*
+
+# SQLite çalışma dosyaları (asıl quotes.db repoda tutulur)
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Test, editör ve işletim sistemi artıkları
+coverage/
+.nyc_output/
+.idea/
+.vscode/
 .DS_Store
 npm-debug.log*
