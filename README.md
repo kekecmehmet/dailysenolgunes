@@ -22,7 +22,7 @@ An open-source X bot that publishes one sourced Şenol Güneş quote every day a
 ## How it works
 
 ```text
-GitHub Actions retry window (18:00–18:30 UTC)
+GitHub Actions pre-warm (17:40 UTC)
               │
               ▼
      Select first unposted quote
@@ -106,7 +106,8 @@ Every quote must be no longer than 280 characters and have a direct HTTPS source
 
 ## Automation safety
 
-- Scheduled runs retry during the 21:00–21:30 window; a persisted daily lock allows only one successful post.
+- A scheduled run wakes before 21:00 and waits in-process for the target time; fallback runs continue through 21:30.
+- A persisted daily lock allows only one successful post per Istanbul calendar day.
 - Push events run tests and a dry-run; they never publish.
 - Manual workflow runs default to dry-run.
 - The database is updated only after X confirms a successful post.

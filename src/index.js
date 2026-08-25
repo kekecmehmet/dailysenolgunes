@@ -1,20 +1,24 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { TwitterApi } from "twitter-api-v2";
 import { getNextQuote, markAsPosted, openDatabase, validateQuote } from "./database.js";
+import { dateInIstanbul, millisecondsUntilPostTime } from "./schedule.js";
 
 const dailyStateUrl = new URL("../data/last-post-date.txt", import.meta.url);
-const todayInIstanbul = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Europe/Istanbul",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-}).format(new Date());
+const todayInIstanbul = dateInIstanbul();
 
 if (process.env.ENFORCE_DAILY_LIMIT === "true") {
   const lastPostDate = (await readFile(dailyStateUrl, "utf8")).trim();
   if (lastPostDate === todayInIstanbul) {
     console.log(`Bugünün sözü zaten paylaşıldı (${todayInIstanbul}); işlem yapılmadı.`);
     process.exit(0);
+  }
+}
+
+if (process.env.WAIT_UNTIL_POST_TIME === "true") {
+  const waitMilliseconds = millisecondsUntilPostTime();
+  if (waitMilliseconds > 0) {
+    console.log(`21.00 için ${Math.ceil(waitMilliseconds / 60_000)} dakika bekleniyor.`);
+    await new Promise((resolve) => setTimeout(resolve, waitMilliseconds));
   }
 }
 

@@ -4,9 +4,10 @@ on:
   push:
     branches: [main]
   schedule:
-    # GitHub saat başında gecikebildiği için 21:00-21:30 arasında tekrar dener.
-    # Uygulamadaki günlük kilit yalnızca ilk başarılı denemenin post atmasını sağlar.
-    - cron: "0,5,10,15,20,25,30 18 * * *"
+    # İlk işler 21:00'den önce uyanıp uygulama içinde hedef saati bekler.
+    # Sonraki saatler GitHub gecikmelerine karşı yedektir; günlük kilit çift postu önler.
+    - cron: "40,50 17 * * *"
+    - cron: "0,10,20,30 18 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -22,7 +23,7 @@ concurrency:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 40
     permissions:
       contents: write
     steps:
@@ -41,6 +42,7 @@ jobs:
           DRY_RUN: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
           CONFIRM_POST: "true"
           ENFORCE_DAILY_LIMIT: ${{ github.event_name == 'schedule' }}
+          WAIT_UNTIL_POST_TIME: ${{ github.event_name == 'schedule' }}
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
