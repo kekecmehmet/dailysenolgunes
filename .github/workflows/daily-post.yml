@@ -1,0 +1,49 @@
+name: Günlük Şenol Güneş sözü
+
+on:
+  schedule:
+    # Türkiye saatiyle her gün 09:00 (Türkiye yıl boyu UTC+3).
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Paylaşmadan yalnızca metni göster"
+        type: boolean
+        default: true
+        required: true
+
+concurrency:
+  group: daily-senol-gunes-post
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Sözü paylaş
+        env:
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+          CONFIRM_POST: "true"
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: npm start
+      - name: Paylaşım durumunu kaydet
+        if: ${{ github.event_name == 'schedule' || inputs.dry_run == false }}
+        run: |
+          git config user.name "daily-senol-bot"
+          git config user.email "daily-senol-bot@users.noreply.github.com"
+          git add data/quotes.db
+          git diff --cached --quiet || git commit -m "Sıradaki Şenol Güneş sözü paylaşıldı"
+          git push

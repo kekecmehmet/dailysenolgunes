@@ -1,0 +1,21 @@
+{
+  "name": "daily-senol-gunes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Her gün doğrulanmış bir Şenol Güneş sözü paylaşan X botu",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dry-run": "DRY_RUN=true node src/index.js",
+    "db:init": "node scripts/init-db.js",
+    "db:add": "node scripts/add-quote.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "better-sqlite3": "13.0.3",
+    "twitter-api-v2": "1.29.1"
+  }
+}
