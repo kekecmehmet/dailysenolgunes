@@ -51,4 +51,22 @@ npm run db:add -- "Şenol Güneş'in sözü" "https://kaynak-adresi.example"
 npm test
 ```
 
+Arşivi yönetmek için:
+
+```bash
+# Kaynakları ve paylaşım durumlarını listele
+npm run db:list
+
+# Kalan paylaşılmamış söz sayısını göster
+npm run db:stock
+
+# Bir sözü ve kaynağını düzelt
+npm run db:edit -- 12 "Düzeltilmiş söz" "https://kaynak.example"
+
+# Uygun olmayan bir sözü sil
+npm run db:remove -- 12
+```
+
+Yönetim komutlarından sonra `data/quotes.db` dosyasındaki değişikliği commit edip GitHub'a göndermek gerekir.
+
 Kaynak yalnızca senin incelemen için saklanır, postun içine girmez. Bot paylaşılmamış ilk sözü seçer, X başarılı cevap verince `posted` değerini `1` yapar. Bütün sözler bitince yeni tur otomatik başlar.

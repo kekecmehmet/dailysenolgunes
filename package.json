@@ -9,6 +9,10 @@
     "dry-run": "DRY_RUN=true node src/index.js",
     "db:init": "node scripts/init-db.js",
     "db:add": "node scripts/add-quote.js",
+    "db:list": "node scripts/manage-db.js list",
+    "db:edit": "node scripts/manage-db.js edit",
+    "db:remove": "node scripts/manage-db.js remove",
+    "db:stock": "node scripts/manage-db.js stock",
     "test": "node --test"
   },
   "engines": {
