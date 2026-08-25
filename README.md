@@ -1,6 +1,6 @@
 # Daily Şenol Güneş ☀️
 
-Her gün Türkiye saatiyle 09:00'da, kaynağı kayıtlı bir Şenol Güneş sözünü X'te paylaşır. Post yalnızca sözün kendisinden oluşur; tırnak, imza, emoji ve kaynak eklenmez.
+Her gün Türkiye saatiyle 21:00'da, kaynağı kayıtlı bir Şenol Güneş sözünü X'te paylaşır. Post yalnızca sözün kendisinden oluşur; tırnak, imza, emoji ve kaynak eklenmez.
 
 ## Önce hesabı hazırla
 
@@ -38,7 +38,7 @@ Repoyu GitHub'a gönderip **Settings → Secrets and variables → Actions** bö
 - `X_ACCESS_TOKEN`
 - `X_ACCESS_SECRET`
 
-`Actions` sekmesindeki **Günlük Şenol Güneş sözü** işini önce varsayılan `dry_run: true` ile elle çalıştır. Logdaki metin doğruysa zamanlanmış iş her gün 09:00'da gerçek paylaşımı yapar.
+`Actions` sekmesindeki **Günlük Şenol Güneş sözü** işini önce varsayılan `dry_run: true` ile elle çalıştır. Logdaki metin doğruysa zamanlanmış iş her gün 21:00'da gerçek paylaşımı yapar.
 
 Başarılı paylaşımdan sonra veritabanındaki `posted` sütunu güncellenir ve workflow bu değişikliği repoya kaydeder. GitHub zamanlayıcısı yoğunlukta birkaç dakika gecikebilir. Elle çalıştırma varsayılan olarak dry-run'dır.
 

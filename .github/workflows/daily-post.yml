@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
   schedule:
-    # Türkiye saatiyle her gün 09:00 (Türkiye yıl boyu UTC+3).
-    - cron: "0 6 * * *"
+    # Türkiye saatiyle her gün 21:00 (Türkiye yıl boyu UTC+3).
+    - cron: "0 18 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -34,7 +34,7 @@ jobs:
       - run: npm test
       - name: Sözü paylaş
         env:
-          DRY_RUN: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+          DRY_RUN: ${{ (github.event_name == 'push' && !contains(github.event.head_commit.message, '[post-now]')) || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
           CONFIRM_POST: "true"
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
@@ -42,7 +42,7 @@ jobs:
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
         run: npm start
       - name: Paylaşım durumunu kaydet
-        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false) }}
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[post-now]')) }}
         run: |
           git config user.name "daily-senol-bot"
           git config user.email "daily-senol-bot@users.noreply.github.com"
