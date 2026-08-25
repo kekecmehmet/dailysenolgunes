@@ -1,6 +1,8 @@
 name: Günlük Şenol Güneş sözü
 
 on:
+  push:
+    branches: [main]
   schedule:
     # Türkiye saatiyle her gün 09:00 (Türkiye yıl boyu UTC+3).
     - cron: "0 6 * * *"
@@ -32,7 +34,7 @@ jobs:
       - run: npm test
       - name: Sözü paylaş
         env:
-          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+          DRY_RUN: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
           CONFIRM_POST: "true"
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
