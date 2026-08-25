@@ -42,7 +42,7 @@ jobs:
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
         run: npm start
       - name: Paylaşım durumunu kaydet
-        if: ${{ github.event_name == 'schedule' || inputs.dry_run == false }}
+        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false) }}
         run: |
           git config user.name "daily-senol-bot"
           git config user.email "daily-senol-bot@users.noreply.github.com"
