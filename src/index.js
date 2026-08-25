@@ -1,5 +1,22 @@
+import { readFile, writeFile } from "node:fs/promises";
 import { TwitterApi } from "twitter-api-v2";
 import { getNextQuote, markAsPosted, openDatabase, validateQuote } from "./database.js";
+
+const dailyStateUrl = new URL("../data/last-post-date.txt", import.meta.url);
+const todayInIstanbul = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Europe/Istanbul",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(new Date());
+
+if (process.env.ENFORCE_DAILY_LIMIT === "true") {
+  const lastPostDate = (await readFile(dailyStateUrl, "utf8")).trim();
+  if (lastPostDate === todayInIstanbul) {
+    console.log(`Bugünün sözü zaten paylaşıldı (${todayInIstanbul}); işlem yapılmadı.`);
+    process.exit(0);
+  }
+}
 
 const db = openDatabase();
 const record = getNextQuote(db);
@@ -31,5 +48,6 @@ const client = new TwitterApi({
 
 const response = await client.readWrite.v2.tweet(post);
 markAsPosted(db, record.quote, record.startsNewCycle);
+await writeFile(dailyStateUrl, `${todayInIstanbul}\n`, "utf8");
 db.close();
 console.log(`Paylaşıldı: https://x.com/i/web/status/${response.data.id}`);

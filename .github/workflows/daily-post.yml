@@ -4,8 +4,9 @@ on:
   push:
     branches: [main]
   schedule:
-    # Türkiye saatiyle her gün 21:00 (Türkiye yıl boyu UTC+3).
-    - cron: "0 18 * * *"
+    # GitHub saat başında gecikebildiği için 21:00-21:30 arasında tekrar dener.
+    # Uygulamadaki günlük kilit yalnızca ilk başarılı denemenin post atmasını sağlar.
+    - cron: "0,5,10,15,20,25,30 18 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -30,12 +31,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: En güncel paylaşım durumunu al
+        if: ${{ github.event_name == 'schedule' }}
+        run: git pull --ff-only origin main
       - run: npm ci
       - run: npm test
       - name: Sözü paylaş
         env:
           DRY_RUN: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
           CONFIRM_POST: "true"
+          ENFORCE_DAILY_LIMIT: ${{ github.event_name == 'schedule' }}
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
@@ -46,6 +51,6 @@ jobs:
         run: |
           git config user.name "daily-senol-bot"
           git config user.email "daily-senol-bot@users.noreply.github.com"
-          git add data/quotes.db
+          git add data/quotes.db data/last-post-date.txt
           git diff --cached --quiet || git commit -m "Sıradaki Şenol Güneş sözü paylaşıldı"
           git push

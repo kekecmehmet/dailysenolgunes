@@ -14,7 +14,7 @@ An open-source X bot that publishes one sourced Şenol Güneş quote every day a
 - Keeps every quote and its source in a local SQLite database
 - Marks a quote as posted only after a successful X API response
 - Cycles through the archive without repeating unposted quotes
-- Runs automatically with GitHub Actions
+- Runs automatically with GitHub Actions and a daily idempotency lock
 - Uses safe dry-runs for ordinary code pushes
 - Validates the 280-character limit and rejects duplicate entries
 - Stores API credentials exclusively in GitHub Actions Secrets
@@ -22,7 +22,7 @@ An open-source X bot that publishes one sourced Şenol Güneş quote every day a
 ## How it works
 
 ```text
-GitHub Actions schedule (18:00 UTC)
+GitHub Actions retry window (18:00–18:30 UTC)
               │
               ▼
      Select first unposted quote
@@ -106,7 +106,7 @@ Every quote must be no longer than 280 characters and have a direct HTTPS source
 
 ## Automation safety
 
-- Scheduled runs publish one post and persist the new database state.
+- Scheduled runs retry during the 21:00–21:30 window; a persisted daily lock allows only one successful post.
 - Push events run tests and a dry-run; they never publish.
 - Manual workflow runs default to dry-run.
 - The database is updated only after X confirms a successful post.
