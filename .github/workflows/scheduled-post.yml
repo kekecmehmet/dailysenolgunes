@@ -1,0 +1,16 @@
+name: Saat 21.00 tetikleyici
+
+on:
+  schedule:
+    # GitHub'ın zamanlayıcı kaydını ana işten ayrı ve sade tutar.
+    - cron: "40,50 17 * * *"
+    - cron: "0,10,20,30 18 * * *"
+permissions:
+  contents: write
+
+jobs:
+  run-daily-post:
+    uses: ./.github/workflows/daily-post.yml
+    with:
+      scheduled: true
+    secrets: inherit

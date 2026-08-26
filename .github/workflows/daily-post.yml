@@ -15,6 +15,12 @@ on:
         type: boolean
         default: true
         required: true
+  workflow_call:
+    inputs:
+      scheduled:
+        description: "Günlük saat tetikleyicisinden çağrıldı"
+        type: boolean
+        default: false
 
 concurrency:
   group: daily-senol-gunes-post
@@ -33,7 +39,7 @@ jobs:
           node-version: 22
           cache: npm
       - name: En güncel paylaşım durumunu al
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ github.event_name == 'schedule' || inputs.scheduled == true }}
         run: git pull --ff-only origin main
       - run: npm ci
       - run: npm test
@@ -41,15 +47,15 @@ jobs:
         env:
           DRY_RUN: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
           CONFIRM_POST: "true"
-          ENFORCE_DAILY_LIMIT: ${{ github.event_name == 'schedule' }}
-          WAIT_UNTIL_POST_TIME: ${{ github.event_name == 'schedule' }}
+          ENFORCE_DAILY_LIMIT: ${{ github.event_name == 'schedule' || inputs.scheduled == true }}
+          WAIT_UNTIL_POST_TIME: ${{ github.event_name == 'schedule' || inputs.scheduled == true }}
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
         run: npm start
       - name: Paylaşım durumunu kaydet
-        if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false) }}
+        if: ${{ github.event_name == 'schedule' || inputs.scheduled == true || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false) }}
         run: |
           git config user.name "daily-senol-bot"
           git config user.email "daily-senol-bot@users.noreply.github.com"

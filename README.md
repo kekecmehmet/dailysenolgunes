@@ -108,6 +108,7 @@ Every quote must be no longer than 280 characters and have a direct HTTPS source
 
 - A scheduled run wakes before 21:00 and waits in-process for the target time; fallback runs continue through 21:30.
 - A persisted daily lock allows only one successful post per Istanbul calendar day.
+- A separate schedule-only workflow keeps the clock trigger independent from push and manual runs.
 - Push events run tests and a dry-run; they never publish.
 - Manual workflow runs default to dry-run.
 - The database is updated only after X confirms a successful post.
