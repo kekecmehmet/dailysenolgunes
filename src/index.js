@@ -1,7 +1,11 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { TwitterApi } from "twitter-api-v2";
 import { getNextQuote, markAsPosted, openDatabase, validateQuote } from "./database.js";
-import { dateInIstanbul, millisecondsUntilPostTime } from "./schedule.js";
+import {
+  dateInIstanbul,
+  millisecondsUntilPostTime,
+  shouldSkipEarlyScheduledRun,
+} from "./schedule.js";
 
 const dailyStateUrl = new URL("../data/last-post-date.txt", import.meta.url);
 const todayInIstanbul = dateInIstanbul();
@@ -15,6 +19,10 @@ if (process.env.ENFORCE_DAILY_LIMIT === "true") {
 }
 
 if (process.env.WAIT_UNTIL_POST_TIME === "true") {
+  if (shouldSkipEarlyScheduledRun()) {
+    console.log("21.00 paylaşım penceresi henüz açılmadı; işlem yapılmadı.");
+    process.exit(0);
+  }
   const waitMilliseconds = millisecondsUntilPostTime();
   if (waitMilliseconds > 0) {
     console.log(`21.00 için ${Math.ceil(waitMilliseconds / 60_000)} dakika bekleniyor.`);

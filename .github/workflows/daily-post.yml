@@ -3,11 +3,6 @@ name: Günlük Şenol Güneş sözü
 on:
   push:
     branches: [main]
-  schedule:
-    # İlk işler 21:00'den önce uyanıp uygulama içinde hedef saati bekler.
-    # Sonraki saatler GitHub gecikmelerine karşı yedektir; günlük kilit çift postu önler.
-    - cron: "40,50 17 * * *"
-    - cron: "0,10,20,30 18 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -39,7 +34,7 @@ jobs:
           node-version: 22
           cache: npm
       - name: En güncel paylaşım durumunu al
-        if: ${{ github.event_name == 'schedule' || inputs.scheduled == true }}
+        if: ${{ inputs.scheduled == true }}
         run: git pull --ff-only origin main
       - run: npm ci
       - run: npm test
@@ -47,15 +42,15 @@ jobs:
         env:
           DRY_RUN: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
           CONFIRM_POST: "true"
-          ENFORCE_DAILY_LIMIT: ${{ github.event_name == 'schedule' || inputs.scheduled == true }}
-          WAIT_UNTIL_POST_TIME: ${{ github.event_name == 'schedule' || inputs.scheduled == true }}
+          ENFORCE_DAILY_LIMIT: ${{ inputs.scheduled == true }}
+          WAIT_UNTIL_POST_TIME: ${{ inputs.scheduled == true }}
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
         run: npm start
       - name: Paylaşım durumunu kaydet
-        if: ${{ github.event_name == 'schedule' || inputs.scheduled == true || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false) }}
+        if: ${{ inputs.scheduled == true || (github.event_name == 'workflow_dispatch' && inputs.dry_run == false) }}
         run: |
           git config user.name "daily-senol-bot"
           git config user.email "daily-senol-bot@users.noreply.github.com"

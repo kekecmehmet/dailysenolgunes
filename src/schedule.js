@@ -12,3 +12,7 @@ export function millisecondsUntilPostTime(date = new Date()) {
   const target = new Date(`${dateInIstanbul(date)}T18:00:00Z`).getTime();
   return Math.max(0, target - date.getTime());
 }
+
+export function shouldSkipEarlyScheduledRun(date = new Date(), maximumWaitMinutes = 15) {
+  return millisecondsUntilPostTime(date) > maximumWaitMinutes * 60 * 1000;
+}
