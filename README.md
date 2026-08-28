@@ -106,9 +106,9 @@ Every quote must be no longer than 280 characters and have a direct HTTPS source
 
 ## Automation safety
 
-- A scheduled run wakes at 20:50 and waits in-process for the target time; fallback runs retry every ten minutes from 21:00 through 23:50.
+- A scheduled run wakes at 20:57 and waits in-process for the target time; fallback runs retry every ten minutes from 21:07 through 23:57.
 - A persisted daily lock allows only one successful post per Istanbul calendar day.
-- A single schedule-only workflow keeps the clock trigger independent from push and manual runs.
+- A standalone schedule workflow runs the complete post job directly, independent from push and manual runs.
 - Runs delayed past midnight exit without publishing the next day's quote early.
 - Push events run tests and a dry-run; they never publish.
 - Manual workflow runs default to dry-run.
