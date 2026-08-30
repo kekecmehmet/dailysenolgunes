@@ -2,11 +2,11 @@ name: Her akşam 21.00'de paylaş
 
 on:
   schedule:
-    # 20:57 tetiki runner içinde 21:00'i bekler. Sonraki tetikler GitHub
-    # gecikmelerine karşı 21:07-23:57 arasında on dakikada bir tekrar dener.
+    # GitHub bu repoda cron event'lerini saatlerce geciktirebildiği için istekler
+    # öğleden sonra başlar. Uygulama 21:00'dan erken gelenleri güvenle reddeder;
+    # 21:00'dan sonra ulaşan ilk event paylaşır ve günlük kilidi kapatır.
     # GitHub cron UTC kullanır; Türkiye UTC+3'tür.
-    - cron: "57 17 * * *"
-    - cron: "7,17,27,37,47,57 18-20 * * *"
+    - cron: "12,27,42,57 12-20 * * *"
   workflow_dispatch:
 
 permissions:

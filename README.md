@@ -106,7 +106,7 @@ Every quote must be no longer than 280 characters and have a direct HTTPS source
 
 ## Automation safety
 
-- A scheduled run wakes at 20:57 and waits in-process for the target time; fallback runs retry every ten minutes from 21:07 through 23:57.
+- Schedule events are requested every fifteen minutes from 15:12 through 23:57 Istanbul time. Early deliveries exit safely; the first delivery at or after 21:00 publishes.
 - A persisted daily lock allows only one successful post per Istanbul calendar day.
 - A standalone schedule workflow runs the complete post job directly, independent from push and manual runs.
 - Runs delayed past midnight exit without publishing the next day's quote early.
